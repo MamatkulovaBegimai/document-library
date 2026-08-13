@@ -1,0 +1,82 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Электрондук архив · PDF & DOCX</p>
+    <h1>Лекциялар менен китептер — бир текчеде</h1>
+    <p class="lede">Изде, кара, жүктөп ал. Каталог автоматтык түрдө толукталып турат.</p>
+
+    <form class="search" method="get" action="{% url 'library:document_list' %}">
+      {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}">{% endif %}
+      <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="Аталышы, автору же тема боюнча издөө…"
+        autocomplete="off"
+      />
+      <button type="submit">Издөө</button>
+    </form>
+
+    <div class="chips">
+      <a class="chip {% if not active_category %}active{% endif %}"
+         href="?{% if query %}q={{ query }}{% endif %}">Баары</a>
+      {% for cat in categories %}
+        <a class="chip {% if active_category == cat %}active{% endif %}"
+           href="?category={{ cat }}{% if query %}&q={{ query }}{% endif %}">{{ cat }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="results-bar">
+    <span class="results-count">
+      {% if total %}{{ total }} документ табылды{% endif %}
+    </span>
+  </div>
+
+  {% if page_obj.object_list %}
+  <div class="grid">
+    {% for doc in page_obj.object_list %}
+    <a class="card-doc" href="{% url 'library:document_detail' doc.pk %}">
+      <div class="card-top">
+        <span class="call-number">№ {{ doc.call_number }}</span>
+        <span class="filetype">{{ doc.file_type }}</span>
+      </div>
+      <h3>{{ doc.title }}</h3>
+      {% if doc.author %}<div class="card-author">{{ doc.author }}</div>{% endif %}
+      {% if doc.description %}<p class="card-desc">{{ doc.description }}</p>{% endif %}
+      {% if doc.tags_list %}
+      <div class="card-tags">
+        {% for tag in doc.tags_list %}<span class="tag">{{ tag }}</span>{% endfor %}
+      </div>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <p class="empty-mark">∅</p>
+    <p>Эч нерсе табылган жок.</p>
+    <p class="empty-hint">Издөө сөзүн өзгөртүп көрүңүз же жаңы документ кошуңуз.</p>
+  </div>
+  {% endif %}
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <nav class="pager">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if active_category %}&category={{ active_category }}{% endif %}">←</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      <a class="{% if num == page_obj.number %}active{% endif %}"
+         href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if active_category %}&category={{ active_category }}{% endif %}">{{ num }}</a>
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if active_category %}&category={{ active_category }}{% endif %}">→</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</main>
+{% endblock %}

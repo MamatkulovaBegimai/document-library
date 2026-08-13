@@ -1,0 +1,37 @@
+{% extends 'library/base.html' %}
+
+{% block title %}{{ doc.title }} — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap detail-page">
+  <a class="back-link" href="{% url 'library:document_list' %}">← Тизмеге кайтуу</a>
+
+  <div class="detail-card">
+    <div class="card-top">
+      <span class="call-number">№ {{ doc.call_number }}</span>
+      <span class="filetype">{{ doc.file_type }}</span>
+    </div>
+    <h1>{{ doc.title }}</h1>
+    <div class="detail-meta">
+      {% if doc.author %}{{ doc.author }} · {% endif %}
+      {{ doc.file_type|upper }} ·
+      {{ doc.file_size|filesizeformat }} ·
+      {{ doc.downloads }} жолу жүктөлгөн ·
+      {{ doc.created_at|date:"d.m.Y" }}
+    </div>
+
+    {% if doc.description %}<p class="detail-desc">{{ doc.description }}</p>{% endif %}
+
+    {% if doc.tags_list %}
+    <div class="card-tags">
+      {% for tag in doc.tags_list %}<span class="tag">{{ tag }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="detail-actions">
+      <a class="detail-download" href="{% url 'library:document_read' doc.pk %}">Оку онлайн</a>
+      <a class="detail-download detail-download-secondary" href="{% url 'library:document_download' doc.pk %}">Жүктөп алуу</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

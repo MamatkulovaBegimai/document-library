@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{% block title %}Китепкана — электрондук архив{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'library/css/style.css' %}" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="{% url 'library:document_list' %}">
+      <span class="brand-mark">№</span>
+      <span class="brand-text">Китепкана</span>
+    </a>
+    <div class="topbar-actions">
+      {% if can_upload %}
+        <a class="btn btn-ghost" href="{% url 'library:document_upload' %}">+ Документ кошуу</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <span class="user-tag">{{ user.username }}</span>
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+          {% csrf_token %}
+          <button type="submit" class="btn-link">Чыгуу</button>
+        </form>
+      {% else %}
+        <a class="btn-link" href="{% url 'login' %}">Кирүү</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% if messages %}
+<div class="wrap">
+  {% for message in messages %}
+    <p class="flash-message">{{ message }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Китепкана · электрондук архив</span>
+  </div>
+</footer>
+
+</body>
+</html>

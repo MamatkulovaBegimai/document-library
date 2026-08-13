@@ -1,0 +1,13 @@
+Django>=5.0,<6.0
+python-dotenv>=1.0.0
+Pillow>=10.0.0
+
+# Продакшн деплою үчүн (Render):
+gunicorn>=22.0.0
+whitenoise>=6.7.0
+dj-database-url>=2.2.0
+psycopg[binary]>=3.1.0
+
+# Cloud storage (Cloudflare R2 / AWS S3) үчүн:
+django-storages>=1.14
+boto3>=1.34

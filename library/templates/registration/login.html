@@ -1,0 +1,32 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Кирүү — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap upload-page">
+  <a class="back-link" href="{% url 'library:document_list' %}">← Тизмеге кайтуу</a>
+
+  <div class="upload-card" style="max-width: 380px;">
+    <h1>Кирүү</h1>
+
+    <form method="post" class="upload-form">
+      {% csrf_token %}
+      {% if form.errors %}
+        <p class="form-error">Колдонуучу аты же сырсөз туура эмес.</p>
+      {% endif %}
+      <label class="field">
+        <span>Колдонуучу аты</span>
+        {{ form.username }}
+      </label>
+      <label class="field">
+        <span>Сырсөз</span>
+        {{ form.password }}
+      </label>
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">Кирүү</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

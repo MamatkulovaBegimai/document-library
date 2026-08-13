@@ -1,0 +1,30 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Документ кошуу — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap upload-page">
+  <a class="back-link" href="{% url 'library:document_list' %}">← Тизмеге кайтуу</a>
+
+  <div class="upload-card">
+    <h1>Жаңы документ кошуу</h1>
+
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      {% csrf_token %}
+
+      {% for field in form %}
+      <label class="field {% if field.name == 'file' %}file-field{% endif %}">
+        <span>{{ field.label }}{% if field.field.required %} *{% endif %}</span>
+        {{ field }}
+        {% if field.errors %}<p class="form-error">{{ field.errors|striptags }}</p>{% endif %}
+      </label>
+      {% endfor %}
+
+      <div class="modal-actions">
+        <a class="btn btn-ghost" href="{% url 'library:document_list' %}">Жокко чыгаруу</a>
+        <button type="submit" class="btn btn-primary">Кошуу</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
