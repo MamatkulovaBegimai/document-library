@@ -2,7 +2,7 @@ services:
   - type: web
     name: document-library
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: "bash build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
@@ -33,4 +33,4 @@ services:
 
 databases:
   - name: document-library-db
-    plan: starter
+    plan: free
