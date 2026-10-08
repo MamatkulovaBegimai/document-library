@@ -1,0 +1,41 @@
+{% extends 'library/base.html' %}
+
+{% block title %}{{ doc.title }} — Оку онлайн{% endblock %}
+
+{% block content %}
+<main class="wrap reader-page">
+  <div class="reader-head">
+    <div>
+      <a class="back-link" href="{% url 'library:document_detail' doc.pk %}">← Документке кайтуу</a>
+      <h1>{{ doc.title }}</h1>
+    </div>
+
+    <a class="btn btn-ghost" href="{% url 'library:document_download' doc.pk %}">
+      Жүктөп алуу
+    </a>
+  </div>
+
+  {% if doc.file_type == 'pdf' %}
+    <iframe
+      class="reader-frame"
+      src="{{ absolute_file_url }}"
+      title="{{ doc.title }}"
+    ></iframe>
+
+    <p class="docx-notice">
+      Эгер PDF браузерде ачылбаса, жогору жактагы «Жүктөп алуу» баскычын колдонуңуз.
+    </p>
+  {% else %}
+    <div class="upload-card" style="max-width: 680px;">
+      <h1>Онлайн көрүү жеткиликтүү эмес</h1>
+      <p class="profile-hint">
+        {{ doc.file_type|upper }} форматындагы файл браузерде түз көрсөтүлбөйт.
+        Файлды жүктөп алып, тиешелүү программа менен ачыңыз.
+      </p>
+      <a class="btn btn-primary" href="{% url 'library:document_download' doc.pk %}">
+        Жүктөп алуу
+      </a>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}
