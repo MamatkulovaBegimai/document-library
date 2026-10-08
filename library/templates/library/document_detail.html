@@ -29,7 +29,9 @@
     {% endif %}
 
     <div class="detail-actions">
-      <a class="detail-download" href="{% url 'library:document_read' doc.pk %}">Оку онлайн</a>
+      {% if doc.file_type == 'pdf' %}
+        <a class="detail-download" href="{% url 'library:document_read' doc.pk %}">Оку онлайн</a>
+      {% endif %}
       <a class="detail-download detail-download-secondary" href="{% url 'library:document_download' doc.pk %}">Жүктөп алуу</a>
     </div>
   </div>
