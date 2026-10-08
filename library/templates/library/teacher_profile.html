@@ -1,0 +1,84 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Менин профилим — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap upload-page">
+  <a class="back-link" href="{% url 'library:document_list' %}">← Китепканага кайтуу</a>
+
+  <div class="profile-grid">
+    <section class="upload-card">
+      <h1>Менин профилим</h1>
+      <p class="profile-hint">Бул маалыматтар аккаунтуңуз жана сырсөздү калыбына келтирүү үчүн колдонулат.</p>
+
+      <form method="post" class="upload-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="profile">
+
+        <label class="field">
+          <span>Аты</span>
+          {{ profile_form.first_name }}
+          {{ profile_form.first_name.errors }}
+        </label>
+
+        <label class="field">
+          <span>Фамилиясы</span>
+          {{ profile_form.last_name }}
+          {{ profile_form.last_name.errors }}
+        </label>
+
+        <label class="field">
+          <span>Email</span>
+          {{ profile_form.email }}
+          {{ profile_form.email.errors }}
+        </label>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Маалыматты сактоо</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="upload-card">
+      <h1>Сырсөздү өзгөртүү</h1>
+      <p class="profile-hint">Коопсуздук үчүн учурдагы сырсөздү киргизиңиз, андан кийин жаңы сырсөз коюңуз.</p>
+
+      <form method="post" class="upload-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="password">
+
+        {% if password_form.non_field_errors %}
+          <div class="form-error">{{ password_form.non_field_errors }}</div>
+        {% endif %}
+
+        <label class="field">
+          <span>Учурдагы сырсөз</span>
+          {{ password_form.old_password }}
+          {{ password_form.old_password.errors }}
+        </label>
+
+        <label class="field">
+          <span>Жаңы сырсөз</span>
+          {{ password_form.new_password1 }}
+          {{ password_form.new_password1.errors }}
+        </label>
+
+        <label class="field">
+          <span>Жаңы сырсөздү кайталаңыз</span>
+          {{ password_form.new_password2 }}
+          {{ password_form.new_password2.errors }}
+        </label>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Сырсөздү өзгөртүү</button>
+        </div>
+      </form>
+
+      <p class="profile-hint" style="margin-top: 18px;">
+        Эгер учурдагы сырсөздү унутсаңыз,
+        <a href="{% url 'password_reset' %}">email аркылуу калыбына келтириңиз</a>.
+      </p>
+    </section>
+  </div>
+</main>
+{% endblock %}
