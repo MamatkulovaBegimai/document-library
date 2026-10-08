@@ -1,0 +1,23 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Документти өчүрүү — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap upload-page">
+  <a class="back-link" href="{% url 'library:teacher_documents' %}">← Менин документтериме кайтуу</a>
+
+  <div class="upload-card" style="max-width: 560px;">
+    <h1>Документти өчүрүү</h1>
+    <p>«<strong>{{ doc.title }}</strong>» документин чын эле өчүрөсүзбү?</p>
+    <p class="profile-hint">Документ база менен кошо файл сактагычтан да өчүрүлөт. Бул аракетти артка кайтаруу мүмкүн эмес.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <a class="btn btn-ghost" href="{% url 'library:teacher_documents' %}">Жокко чыгаруу</a>
+        <button type="submit" class="btn danger-btn">Өчүрүү</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
