@@ -20,3 +20,26 @@ class DocumentForm(forms.ModelForm):
         if file.size > max_size:
             raise forms.ValidationError('Файл өлчөмү 100 MB\'ден ашпашы керек.')
         return file
+
+
+class TeacherProfileForm(forms.ModelForm):
+    class Meta:
+        from django.contrib.auth import get_user_model
+        model = get_user_model()
+        fields = ['first_name', 'last_name', 'email']
+        labels = {
+            'first_name': 'Аты',
+            'last_name': 'Фамилиясы',
+            'email': 'Email',
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip()
+        if not email:
+            raise forms.ValidationError('Email дарегин көрсөтүңүз.')
+
+        User = self._meta.model
+        qs = User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError('Бул email башка аккаунтка катталган.')
+        return email
