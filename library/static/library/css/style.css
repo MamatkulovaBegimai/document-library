@@ -178,3 +178,82 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 760px) {
   .profile-grid { grid-template-columns: 1fr; }
 }
+
+
+/* Teacher document cabinet */
+.teacher-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  padding: 46px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.teacher-head h1 {
+  font-size: 34px;
+}
+.teacher-doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 0 36px;
+}
+.teacher-doc-row {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+.teacher-doc-main {
+  min-width: 0;
+  flex: 1;
+}
+.teacher-doc-main h3 {
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  margin: 8px 0 4px;
+}
+.teacher-doc-main h3 a:hover {
+  color: var(--gold);
+}
+.teacher-doc-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.danger-outline {
+  border-color: #B3261E;
+  color: #B3261E;
+}
+.danger-outline:hover,
+.danger-btn {
+  background: #B3261E;
+  border-color: #B3261E;
+  color: white;
+}
+.danger-btn:hover {
+  background: #8f1f19;
+  border-color: #8f1f19;
+}
+
+@media (max-width: 700px) {
+  .teacher-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .teacher-doc-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .teacher-doc-actions {
+    width: 100%;
+  }
+  .teacher-doc-actions .btn {
+    flex: 1;
+    text-align: center;
+  }
+}
