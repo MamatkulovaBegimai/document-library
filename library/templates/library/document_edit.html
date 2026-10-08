@@ -1,0 +1,30 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Документти өзгөртүү — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap upload-page">
+  <a class="back-link" href="{% url 'library:teacher_documents' %}">← Менин документтериме кайтуу</a>
+
+  <div class="upload-card">
+    <h1>Документти өзгөртүү</h1>
+    <p class="profile-hint">«{{ doc.title }}» документтин маалыматын жаңыртыңыз.</p>
+
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <label class="field">
+          <span>{{ field.label }}</span>
+          {{ field }}
+          {{ field.errors }}
+        </label>
+      {% endfor %}
+      <div class="modal-actions">
+        <a class="btn btn-ghost" href="{% url 'library:teacher_documents' %}">Жокко чыгаруу</a>
+        <button type="submit" class="btn btn-primary">Сактоо</button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
