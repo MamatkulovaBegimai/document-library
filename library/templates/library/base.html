@@ -19,6 +19,7 @@
     </a>
     <div class="topbar-actions">
       {% if can_upload %}
+        <a class="btn-link" href="{% url 'library:teacher_documents' %}">Менин документтерим</a>
         <a class="btn btn-ghost" href="{% url 'library:document_upload' %}">+ Документ кошуу</a>
       {% endif %}
       {% if user.is_authenticated %}
