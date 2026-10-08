@@ -1,0 +1,60 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Менин документтерим — Китепкана{% endblock %}
+
+{% block content %}
+<main class="wrap">
+  <div class="teacher-head">
+    <div>
+      <p class="eyebrow">Мугалимдин кабинети</p>
+      <h1>Менин документтерим</h1>
+      <p class="lede">Жүктөгөн материалдарыңызды ушул жерден өзгөртүп же өчүрө аласыз.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'library:document_upload' %}">+ Документ кошуу</a>
+  </div>
+
+  <div class="results-bar">{{ total }} документ</div>
+
+  {% if page_obj %}
+    <div class="teacher-doc-list">
+      {% for doc in page_obj %}
+        <article class="teacher-doc-row">
+          <div class="teacher-doc-main">
+            <div class="card-top">
+              <span class="call-number">№ {{ doc.call_number }}</span>
+              <span class="filetype">{{ doc.file_type }}</span>
+            </div>
+            <h3><a href="{% url 'library:document_detail' doc.pk %}">{{ doc.title }}</a></h3>
+            <p class="card-author">
+              {% if doc.author %}{{ doc.author }} · {% endif %}
+              {{ doc.created_at|date:"d.m.Y" }} · {{ doc.downloads }} жолу жүктөлгөн
+            </p>
+          </div>
+          <div class="teacher-doc-actions">
+            <a class="btn btn-ghost" href="{% url 'library:document_edit' doc.pk %}">Өзгөртүү</a>
+            <a class="btn danger-outline" href="{% url 'library:document_delete' doc.pk %}">Өчүрүү</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="pager">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">←</a>
+        {% endif %}
+        <a class="active" href="#">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">→</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="empty">
+      <p class="empty-mark">№</p>
+      <p>Азырынча документ жүктөй элексиз.</p>
+      <a class="btn btn-primary" href="{% url 'library:document_upload' %}">Биринчи документти кошуу</a>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}
