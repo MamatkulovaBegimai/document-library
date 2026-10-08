@@ -6,7 +6,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, F
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Document
@@ -25,6 +25,14 @@ def teacher_required(view_func):
             raise PermissionDenied('Бул бөлүккө мугалимдер жана админдер гана кире алат.')
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+def _teacher_document_or_404(request, pk):
+    """Мугалим өз документин гана өзгөртө/өчүрө алат; суперпайдалануучу — баарын."""
+    docs = Document.objects.all()
+    if not request.user.is_superuser:
+        docs = docs.filter(uploaded_by=request.user)
+    return get_object_or_404(docs, pk=pk)
 
 
 def document_list(request):
@@ -71,7 +79,7 @@ def document_detail(request, pk):
 
 def document_download(request, pk):
     doc = get_object_or_404(Document, pk=pk)
-    Document.objects.filter(pk=pk).update(downloads=doc.downloads + 1)
+    Document.objects.filter(pk=pk).update(downloads=F('downloads') + 1)
     return redirect(doc.file.url)
 
 
@@ -90,13 +98,69 @@ def document_upload(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            doc = form.save()
+            doc = form.save(commit=False)
+            doc.uploaded_by = request.user
+            doc.save()
             messages.success(request, f'«{doc.title}» ийгиликтүү кошулду.')
-            return redirect('library:document_detail', pk=doc.pk)
+            return redirect('library:teacher_documents')
     else:
         form = DocumentForm()
 
     return render(request, 'library/document_upload.html', {'form': form})
+
+
+@teacher_required
+def teacher_documents(request):
+    """Мугалимдин жеке кабинети — өзүнүн документтери."""
+    docs = Document.objects.filter(uploaded_by=request.user)
+    if request.user.is_superuser:
+        docs = Document.objects.all()
+
+    paginator = Paginator(docs, PAGE_SIZE)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    return render(request, 'library/teacher_documents.html', {
+        'page_obj': page_obj,
+        'total': paginator.count,
+    })
+
+
+@teacher_required
+def document_edit(request, pk):
+    doc = _teacher_document_or_404(request, pk)
+
+    if request.method == 'POST':
+        old_file_name = doc.file.name
+        form = DocumentForm(request.POST, request.FILES, instance=doc)
+        if form.is_valid():
+            updated = form.save()
+            if old_file_name and updated.file.name != old_file_name:
+                updated.file.storage.delete(old_file_name)
+            messages.success(request, f'«{updated.title}» өзгөртүүлөрү сакталды.')
+            return redirect('library:teacher_documents')
+    else:
+        form = DocumentForm(instance=doc)
+
+    return render(request, 'library/document_edit.html', {
+        'form': form,
+        'doc': doc,
+    })
+
+
+@teacher_required
+def document_delete(request, pk):
+    doc = _teacher_document_or_404(request, pk)
+
+    if request.method == 'POST':
+        title = doc.title
+        if doc.file:
+            doc.file.delete(save=False)
+        doc.delete()
+        messages.success(request, f'«{title}» өчүрүлдү.')
+        return redirect('library:teacher_documents')
+
+    return render(request, 'library/document_delete_confirm.html', {'doc': doc})
+
 
 @teacher_required
 def teacher_profile(request):
