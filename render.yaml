@@ -33,4 +33,4 @@ services:
 
 databases:
   - name: document-library-db
-    plan: free
+    plan: 0.1c-256mb
