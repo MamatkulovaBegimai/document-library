@@ -1,4 +1,9 @@
+import os
+import zipfile
+
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
+
 from .models import Document
 
 
@@ -19,6 +24,40 @@ class DocumentForm(forms.ModelForm):
         max_size = 100 * 1024 * 1024
         if file.size > max_size:
             raise forms.ValidationError('Файл өлчөмү 100 MB\'ден ашпашы керек.')
+
+        # Мазмунду жаңы жүктөлгөн файлдар үчүн гана текшеребиз.
+        # Редактирлөөдө мурдагы R2 файлын кайра окуу талап кылынбайт.
+        if not isinstance(file, UploadedFile):
+            return file
+
+        ext = os.path.splitext(file.name)[1].lower()
+
+        try:
+            file.seek(0)
+
+            if ext == '.pdf':
+                if file.read(5) != b'%PDF-':
+                    raise forms.ValidationError(
+                        'Бул файл чыныгы PDF файлы эмес. Туура PDF файл жүктөңүз.'
+                    )
+
+            elif ext == '.docx':
+                try:
+                    with zipfile.ZipFile(file) as archive:
+                        names = set(archive.namelist())
+                        required = {'[Content_Types].xml', 'word/document.xml'}
+                        if not required.issubset(names):
+                            raise forms.ValidationError(
+                                'Бул файл чыныгы DOCX документи эмес. Туура Word файлын жүктөңүз.'
+                            )
+                except zipfile.BadZipFile:
+                    raise forms.ValidationError(
+                        'Бул файл чыныгы DOCX документи эмес. Туура Word файлын жүктөңүз.'
+                    )
+
+        finally:
+            file.seek(0)
+
         return file
 
 
