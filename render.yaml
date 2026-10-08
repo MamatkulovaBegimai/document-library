@@ -2,7 +2,7 @@ services:
   - type: web
     name: document-library
     runtime: python
-    plan: free
+    plan: starter
     buildCommand: "bash build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
@@ -11,9 +11,9 @@ services:
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: document-library.onrender.com
+        value: document-library-0ze1.onrender.com
       - key: DJANGO_CSRF_TRUSTED_ORIGINS
-        value: https://document-library.onrender.com
+        value: https://document-library-0ze1.onrender.com
       - key: STORAGE_PROVIDER
         value: r2
       - key: S3_BUCKET
