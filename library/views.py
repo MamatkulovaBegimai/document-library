@@ -2,13 +2,15 @@ from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Document
-from .forms import DocumentForm
+from .forms import DocumentForm, TeacherProfileForm
 
 PAGE_SIZE = 12
 
@@ -95,3 +97,40 @@ def document_upload(request):
         form = DocumentForm()
 
     return render(request, 'library/document_upload.html', {'form': form})
+
+@teacher_required
+def teacher_profile(request):
+    """Мугалимдин профили: аты-жөнү, email жана сырсөздү өзгөртүү."""
+    profile_form = TeacherProfileForm(instance=request.user, prefix='profile')
+    password_form = PasswordChangeForm(user=request.user, prefix='password')
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'profile':
+            profile_form = TeacherProfileForm(
+                request.POST,
+                instance=request.user,
+                prefix='profile'
+            )
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Профиль маалыматы сакталды.')
+                return redirect('library:teacher_profile')
+
+        elif action == 'password':
+            password_form = PasswordChangeForm(
+                user=request.user,
+                data=request.POST,
+                prefix='password'
+            )
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Сырсөз ийгиликтүү өзгөртүлдү.')
+                return redirect('library:teacher_profile')
+
+    return render(request, 'library/teacher_profile.html', {
+        'profile_form': profile_form,
+        'password_form': password_form,
+    })
