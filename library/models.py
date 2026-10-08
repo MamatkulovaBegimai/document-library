@@ -1,6 +1,7 @@
 import os
 import uuid
 
+from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
@@ -18,6 +19,15 @@ class Document(models.Model):
     description = models.TextField('Сүрөттөмө', blank=True)
     category = models.CharField('Категория', max_length=100, blank=True, db_index=True)
     tags = models.CharField('Тегдер (үтүр менен)', max_length=255, blank=True)
+
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name='Жүктөгөн мугалим',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='uploaded_documents',
+    )
 
     file = models.FileField(
         'Файл',
@@ -38,7 +48,7 @@ class Document(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        if self.file and not self.file_size:
+        if self.file:
             self.file_size = self.file.size
         super().save(*args, **kwargs)
 
