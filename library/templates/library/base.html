@@ -22,7 +22,7 @@
         <a class="btn btn-ghost" href="{% url 'library:document_upload' %}">+ Документ кошуу</a>
       {% endif %}
       {% if user.is_authenticated %}
-        <span class="user-tag">{{ user.username }}</span>
+        <a class="user-tag" href="{% url 'library:teacher_profile' %}">{{ user.get_full_name|default:user.username }}</a>
         <form method="post" action="{% url 'logout' %}" class="logout-form">
           {% csrf_token %}
           <button type="submit" class="btn-link">Чыгуу</button>
