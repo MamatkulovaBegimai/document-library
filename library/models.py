@@ -63,3 +63,17 @@ class Document(models.Model):
     @property
     def call_number(self):
         return str(self.id)[:6].upper()
+
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+class Teacher(User):
+    """Прокси-модель для удобного управления преподавателями в админке."""
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Преподаватель'
+        verbose_name_plural = 'Преподаватели'
