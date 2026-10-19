@@ -17,7 +17,8 @@
       <span class="brand-mark">№</span>
       <span class="brand-text">Китепкана</span>
     </a>
-    <div class="topbar-actions">
+
+    <nav class="topbar-actions" aria-label="Негизги меню">
       {% if can_upload %}
         <a class="btn-link" href="{% url 'library:teacher_documents' %}">Менин документтерим</a>
       {% endif %}
@@ -30,7 +31,28 @@
       {% else %}
         <a class="btn-link" href="{% url 'login' %}">Кирүү</a>
       {% endif %}
-    </div>
+    </nav>
+
+    <details class="mobile-menu">
+      <summary class="mobile-menu-toggle" aria-label="Менюну ачуу">
+        <span class="menu-icon" aria-hidden="true"></span>
+        <span class="mobile-menu-label">Меню</span>
+      </summary>
+      <nav class="mobile-menu-panel" aria-label="Мобилдик меню">
+        {% if can_upload %}
+          <a class="mobile-menu-link" href="{% url 'library:teacher_documents' %}">Менин документтерим</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <a class="mobile-menu-link mobile-user-link" href="{% url 'library:teacher_profile' %}">{{ user.get_full_name|default:user.username }}</a>
+          <form method="post" action="{% url 'logout' %}" class="mobile-logout-form">
+            {% csrf_token %}
+            <button type="submit" class="mobile-menu-link mobile-menu-button">Чыгуу</button>
+          </form>
+        {% else %}
+          <a class="mobile-menu-link" href="{% url 'login' %}">Кирүү</a>
+        {% endif %}
+      </nav>
+    </details>
   </div>
 </header>
 
