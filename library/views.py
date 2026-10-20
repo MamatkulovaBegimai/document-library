@@ -103,6 +103,8 @@ def document_preview(request, pk):
     )
     response['Content-Disposition'] = f'inline; filename="{doc.pk}.pdf"'
     response['X-Content-Type-Options'] = 'nosniff'
+    # This endpoint is intentionally embedded in the same site's PDF reader iframe.
+    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response
 
 
