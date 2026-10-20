@@ -1,4 +1,5 @@
 {% extends 'library/base.html' %}
+{% load static %}
 
 {% block title %}{{ doc.title }} — Оку онлайн{% endblock %}
 
@@ -17,17 +18,31 @@
 
   {% if doc.file_type == 'pdf' %}
     <p class="docx-notice">
-      Телефондо PDF көрүнбөсө, <a href="{% url 'library:document_preview' doc.pk %}" target="_blank" rel="noopener">PDFти өзүнчө терезеде ачуу</a> шилтемесин басыңыз.
+      PDF телефондо да ушул бетте көрсөтүлөт. Эгер ачылбаса, <a href="{% url 'library:document_preview' doc.pk %}" target="_blank" rel="noopener">PDFти өзүнчө терезеде ачуу</a> шилтемесин колдонуңуз.
     </p>
-    <iframe
-      class="reader-frame"
-      src="{% url 'library:document_preview' doc.pk %}"
-      title="{{ doc.title }}"
-    ></iframe>
-
-    <p class="docx-notice">
-      Эгер PDF браузерде ачылбаса, жогору жактагы «Жүктөп алуу» баскычын колдонуңуз.
-    </p>
+    <section
+      class="pdf-viewer"
+      data-pdf-viewer
+      data-pdf-url="{% url 'library:document_preview' doc.pk %}"
+      data-download-url="{% url 'library:document_download' doc.pk %}"
+      aria-label="{{ doc.title }}"
+    >
+      <div class="pdf-toolbar">
+        <button class="pdf-control" type="button" data-pdf-prev disabled>‹</button>
+        <span class="pdf-page-label" data-pdf-page>—</span>
+        <button class="pdf-control" type="button" data-pdf-next disabled>›</button>
+        <span class="pdf-toolbar-spacer"></span>
+        <button class="pdf-control" type="button" data-pdf-zoom-out aria-label="Кичирейтүү" disabled>−</button>
+        <span class="pdf-zoom-label" data-pdf-zoom>100%</span>
+        <button class="pdf-control" type="button" data-pdf-zoom-in aria-label="Чоңойтуу" disabled>+</button>
+        <a class="pdf-control pdf-download-control" data-pdf-download href="{% url 'library:document_download' doc.pk %}">↓</a>
+      </div>
+      <p class="pdf-status" data-pdf-status role="status">PDF жүктөлүүдө…</p>
+      <div class="pdf-canvas-wrap">
+        <canvas aria-label="PDF барагы"></canvas>
+      </div>
+    </section>
+    <script type="module" src="{% static 'library/js/pdf-viewer.js' %}"></script>
   {% else %}
     <div class="upload-card" style="max-width: 680px;">
       <h1>Онлайн көрүү жеткиликтүү эмес</h1>
@@ -40,5 +55,3 @@
       </a>
     </div>
   {% endif %}
-</main>
-{% endblock %}
