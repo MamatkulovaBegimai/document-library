@@ -12,11 +12,14 @@ class ContentSecurityPolicyMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
+        # Allow only the same-origin PDF preview endpoint to be embedded in the reader iframe.
+        # All other pages remain protected against framing.
+        frame_ancestors = "'self'" if request.path.endswith("/preview/") else "'none'"
         response['Content-Security-Policy'] = (
             "default-src 'self'; "
             "base-uri 'self'; "
             "form-action 'self'; "
-            "frame-ancestors 'none'; "
+            f"frame-ancestors {frame_ancestors}; "
             "object-src 'none'; "
             "script-src 'self'; "
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
