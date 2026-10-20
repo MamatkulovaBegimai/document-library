@@ -32,7 +32,7 @@ class Document(models.Model):
     file = models.FileField(
         'Файл',
         upload_to=document_upload_path,
-        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'docx'])],
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])],
     )
     file_size = models.PositiveIntegerField('Файл өлчөмү (байт)', default=0, editable=False)
     downloads = models.PositiveIntegerField('Жүктөлгөн саны', default=0, editable=False)
