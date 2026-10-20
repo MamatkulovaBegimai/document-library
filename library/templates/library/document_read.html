@@ -18,7 +18,7 @@
   {% if doc.file_type == 'pdf' %}
     <iframe
       class="reader-frame"
-      src="{{ absolute_file_url }}"
+      src="{% url 'library:document_preview' doc.pk %}"
       title="{{ doc.title }}"
     ></iframe>
 
