@@ -6,6 +6,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.http import FileResponse, Http404
 from django.db.models import Q, F
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -86,11 +87,23 @@ def document_download(request, pk):
 def document_read(request, pk):
     """Документти браузерде түз ачуу ('Оку онлайн')."""
     doc = get_object_or_404(Document, pk=pk)
-    absolute_file_url = request.build_absolute_uri(doc.file.url)
-    return render(request, 'library/document_read.html', {
-        'doc': doc,
-        'absolute_file_url': absolute_file_url,
-    })
+    return render(request, 'library/document_read.html', {'doc': doc})
+
+
+def document_preview(request, pk):
+    """Serve PDF through this site with an inline PDF response for mobile browsers."""
+    doc = get_object_or_404(Document, pk=pk)
+    if doc.file_type != 'pdf':
+        raise Http404('PDF документ табылган жок.')
+    response = FileResponse(
+        doc.file.open('rb'),
+        content_type='application/pdf',
+        as_attachment=False,
+        filename=f'{doc.pk}.pdf',
+    )
+    response['Content-Disposition'] = f'inline; filename="{doc.pk}.pdf"'
+    response['X-Content-Type-Options'] = 'nosniff'
+    return response
 
 
 @teacher_required
