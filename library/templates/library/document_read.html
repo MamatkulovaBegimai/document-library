@@ -16,6 +16,9 @@
   </div>
 
   {% if doc.file_type == 'pdf' %}
+    <p class="docx-notice">
+      Телефондо PDF көрүнбөсө, <a href="{% url 'library:document_preview' doc.pk %}" target="_blank" rel="noopener">PDFти өзүнчө терезеде ачуу</a> шилтемесин басыңыз.
+    </p>
     <iframe
       class="reader-frame"
       src="{% url 'library:document_preview' doc.pk %}"
