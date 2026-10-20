@@ -17,9 +17,6 @@
   </div>
 
   {% if doc.file_type == 'pdf' %}
-    <p class="docx-notice">
-      PDF телефондо да ушул бетте көрсөтүлөт. Эгер ачылбаса, <a href="{% url 'library:document_preview' doc.pk %}" target="_blank" rel="noopener">PDFти өзүнчө терезеде ачуу</a> шилтемесин колдонуңуз.
-    </p>
     <section
       class="pdf-viewer"
       data-pdf-viewer
