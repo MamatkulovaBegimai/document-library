@@ -17,6 +17,7 @@ class DocumentForm(forms.ModelForm):
             'category': forms.TextInput(attrs={'placeholder': 'мис. Математика, Тарых…'}),
             'tags': forms.TextInput(attrs={'placeholder': 'лекция, 1-курс, экзамен'}),
             'description': forms.Textarea(attrs={'rows': 3}),
+            'file': forms.ClearableFileInput(attrs={'accept': '.pdf,.doc,.docx'}),
         }
 
     def clean_file(self):
@@ -39,6 +40,13 @@ class DocumentForm(forms.ModelForm):
                 if file.read(5) != b'%PDF-':
                     raise forms.ValidationError(
                         'Бул файл чыныгы PDF файлы эмес. Туура PDF файл жүктөңүз.'
+                    )
+
+            elif ext == '.doc':
+                # Legacy Microsoft Word .doc files use the OLE Compound File signature.
+                if file.read(8) != bytes.fromhex('D0CF11E0A1B11AE1'):
+                    raise forms.ValidationError(
+                        'Бул файл чыныгы DOC документи эмес. Туура Word файлын жүктөңүз.'
                     )
 
             elif ext == '.docx':
